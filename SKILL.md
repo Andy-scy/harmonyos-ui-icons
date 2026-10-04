@@ -18,6 +18,9 @@ description: >
 
 # HarmonyOS 图标库（Iconsax）
 
+> 仓库：https://github.com/Andy-scy/harmonyos-ui-icons
+> 如果这个技能是从 GitHub clone 下来的，**先确认已经跑过 `node scripts/bootstrap.mjs`**（见下面「零」）。
+
 一站式解决"鸿蒙 App 界面要图标"这件事：**图标素材 + 上色方案 + 动效方案 + 踩坑清单**，全部实机验证过。
 
 ---
