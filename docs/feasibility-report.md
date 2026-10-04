@@ -3,8 +3,8 @@
 > 这是仓库版。原版报告里的本地绝对路径已改成仓库内相对路径；
 > 截图位于 `docs/screenshots/`。
 >
-> **关于图标文件**：本报告提到的那些 SVG 不随仓库分发（Iconsax 授权不允许再分发图标本体）。
-> clone 之后先跑 `node scripts/bootstrap.mjs` 从官方 CDN 拉取并解密，报告里说的一切就能复现。
+> **关于图标文件**：本报告提到的那些 SVG 不随包分发（Iconsax 授权不允许再分发图标本体）。
+> 装好之后先跑 `node skills/harmonyos-ui-icons/scripts/bootstrap.mjs` 从官方 CDN 拉取并解密，报告里说的一切就能复现。
 
 > 结论先行：**能用，而且免费的那 7,140 个静态图标是"零依赖、系统原生"直接可用**（已在真机模拟器上跑通并截图）。
 > 但要注意一点：**Iconsax 的"动效图标"（983 个）属于 Pro 付费授权，免费授权里没有。**
@@ -393,17 +393,26 @@ harmonyos-ui-icons/
 ### 复现验证
 
 ```bash
-# 1) 拿图标（仓库里已含精选集；需要更多就按需拉）
-node scripts/fetch-icons.mjs --out ./assets/iconsax --curated
+# 路径均相对于技能根目录 skills/harmonyos-ui-icons/
 
-# 2) 生成 SMIL 动效变体
+# 1) 初始化图标（拉取 + 解密 + 生成动效，一条命令）
+node scripts/bootstrap.mjs
+
+# 2) 需要更多图标时按需拉
+node scripts/fetch-icons.mjs --out ./assets/iconsax --names home,user,setting
+
+# 3) 生成别的动效变体
 node scripts/make-animated-svg.mjs \
   --in ./assets/iconsax --out ./assets/iconsax-anim \
   --effects float,pulse,wiggle
 
-# 3) 把模板和图标拷进你的鸿蒙工程，然后
+# 4) 把模板和图标拷进你的鸿蒙工程，然后
 hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
 ```
+
+> 本包已经提供两个现成脚本：
+> `examples/validate-bundle.mjs`（DSH 技能包契约校验）和
+> `examples/verify-templates.ps1`（把 ArkTS 模板塞进真实工程编译验证）。
 
 > **关于本机验证时的两个细节**：
 > 一是 hvigor 不接受含非 ASCII 字符的工程路径，所以本机上是用脚本先把工程镜像到一个纯 ASCII 路径再编译的；

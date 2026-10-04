@@ -28,25 +28,27 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
-$RepoRoot = Split-Path -Parent $PSScriptRoot   # repo root = parent of examples/
+$RepoRoot = Split-Path -Parent $PSScriptRoot                        # repo root = parent of examples/
+$SkillDir = Join-Path $RepoRoot 'skills\harmonyos-ui-icons'         # the bundled skill
 
 function Fail($msg) { Write-Host "ERROR: $msg"; exit 1 }
 
 if (-not (Test-Path -LiteralPath $ProjectPath)) { Fail "project not found: $ProjectPath" }
 if (-not (Test-Path -LiteralPath "$ProjectPath\oh-package.json5")) { Fail "not a HarmonyOS project (no oh-package.json5): $ProjectPath" }
+if (-not (Test-Path -LiteralPath "$SkillDir\SKILL.md")) { Fail "bundled skill not found: $SkillDir" }
 
 $ets = Join-Path $ProjectPath 'entry\src\main\ets'
 if (-not (Test-Path -LiteralPath $ets)) { Fail "missing entry module ets dir: $ets" }
 
 Write-Host "==> bootstrap icon assets (no-op if already present)"
-& $NodeExe "$RepoRoot\scripts\bootstrap.mjs"
+& $NodeExe "$SkillDir\scripts\bootstrap.mjs"
 if ($LASTEXITCODE -ne 0) { Fail "bootstrap.mjs failed" }
 
 Write-Host "==> copy templates"
 New-Item -ItemType Directory -Force -Path "$ets\common", "$ets\components", "$ets\model" | Out-Null
-Copy-Item -LiteralPath "$RepoRoot\templates\Tint.ets"           -Destination "$ets\common\Tint.ets"            -Force
-Copy-Item -LiteralPath "$RepoRoot\templates\IconsaxIcon.ets"    -Destination "$ets\components\IconsaxIcon.ets" -Force
-Copy-Item -LiteralPath "$RepoRoot\templates\IconsaxCatalog.ets" -Destination "$ets\model\IconsaxCatalog.ets"  -Force
+Copy-Item -LiteralPath "$SkillDir\templates\Tint.ets"           -Destination "$ets\common\Tint.ets"            -Force
+Copy-Item -LiteralPath "$SkillDir\templates\IconsaxIcon.ets"    -Destination "$ets\components\IconsaxIcon.ets" -Force
+Copy-Item -LiteralPath "$SkillDir\templates\IconsaxCatalog.ets" -Destination "$ets\model\IconsaxCatalog.ets"  -Force
 Copy-Item -LiteralPath "$PSScriptRoot\IconsaxExamplePage.ets"   -Destination "$ets\pages\Index.ets"            -Force
 
 if ($SkipBuild) { Write-Host "==> -SkipBuild set, done"; exit 0 }

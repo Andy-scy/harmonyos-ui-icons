@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "HarmonyOS UI Icons (Iconsax)",
+    "description": "Icon toolkit for HarmonyOS / ArkTS UI work: fetches and decrypts the Iconsax free icon set from the official CDN, renders it with the right ArkTS tinting path, and injects zero-dependency SVG SMIL animations. Icon artwork is not bundled — run the bootstrap script after installing."
+  }
+}

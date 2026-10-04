@@ -10,11 +10,15 @@ oh-package-lock.json5.bak
 # redistributing the artwork itself (loose or in packs), including modified
 # versions. So the SVG files must not live in this public repo.
 #
-# Run `node scripts/bootstrap.mjs` after cloning to fetch them from the
-# official Iconsax CDN. See assets/README.md and NOTICE.md.
+# Run `node skills/harmonyos-ui-icons/scripts/bootstrap.mjs` after cloning to
+# fetch them from the official Iconsax CDN.
+# See skills/harmonyos-ui-icons/assets/README.md and NOTICE.md.
+#
+# Pattern is depth-agnostic on purpose: the icons must stay ignored even if the
+# bundle layout moves again.
 # ---------------------------------------------------------------------------
-assets/iconsax/
-assets/iconsax-anim/
+**/assets/iconsax/
+**/assets/iconsax-anim/
 
 # HarmonyOS / hvigor build output
 .hvigor/

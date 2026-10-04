@@ -1,0 +1,67 @@
+{
+  "name": "harmonyos-ui-icons",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness skill bundle that equips the agent with the Iconsax free icon set for HarmonyOS / ArkTS UI work: fetch+decrypt SVGs from the official CDN, ArkTS tinting and animation templates, ArkUI SVG capability notes.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/index.js",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "skills",
+    "locale",
+    "icon.svg",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-skill",
+    "skill-bundle",
+    "harmonyos",
+    "arkts",
+    "arkui",
+    "icons",
+    "iconsax",
+    "svg"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andy-scy/harmonyos-ui-icons.git"
+  },
+  "homepage": "https://github.com/Andy-scy/harmonyos-ui-icons#readme",
+  "bugs": {
+    "url": "https://github.com/Andy-scy/harmonyos-ui-icons/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.0-rc.1": "compatible",
+        "0.2.0-rc.2": "compatible",
+        "0.2.1-alpha.1": "unknown"
+      }
+    }
+  }
+}

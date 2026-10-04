@@ -1,0 +1,27 @@
+# Additive bundle patch for harmonyos-ui-icons.
+#
+# This inserts ONE new row with a plugin-owned id. It does not rename, override,
+# or replace any existing row, and it does not impersonate an official entry id:
+# the id below is unique to this package.
+#
+# The row mounts the host-provided filesystem skill provider
+# (`@deepseek-ai/dsh-skill-filesystem`, shipped with dsh) configured to scan only
+# this package's bundled `skills/` directory:
+#
+#   providerName        unique provider name registered on ctx.skills
+#   includeDefaultRoots false -> do not also scan project/user skill roots,
+#                                so this bundle contributes exactly its own skill
+#   bundledSkillDir     the packaged skills/ root, resolved from the installed
+#                       package identity anchored at the loader's `baseUrl`
+#                       (the DSH profile), never guessed from an environment var
+#
+# `!!js` scalars are loader expressions evaluated with the loader context as
+# their scope (see @deepseek-ai/cordis-plugin-loader src/config/utils.ts), which
+# is why `baseUrl` resolves here. `process` comes from the Node global scope.
+- insert:
+    - id: harmonyos-ui-icons-skill-filesystem
+      name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        providerName: harmonyos-ui-icons
+        includeDefaultRoots: false
+        bundledSkillDir: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('harmonyos-ui-icons/package.json')), 'skills')

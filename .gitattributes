@@ -12,9 +12,14 @@
 *.jpeg binary
 *.gif binary
 *.webp binary
-*.svg binary
 *.hap binary
 *.har binary
+*.hsp binary
 *.p12 binary
 *.cer binary
 *.p7b binary
+
+# SVG stays text: the only .svg committed here is the hand-written plugin icon
+# (icon.svg). The Iconsax artwork is gitignored and never enters the object store,
+# so there is nothing binary to protect.
+*.svg text eol=lf

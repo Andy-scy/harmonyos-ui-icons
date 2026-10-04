@@ -1,17 +1,19 @@
 # NOTICE — 第三方内容与授权
 
-## 0. 一句话说清：本仓库为什么不带图标
+## 0. 一句话说清：本包为什么不带图标
 
 Iconsax 的免费授权允许你把图标用在 App 里，但**不允许把图标本体（含修改过的版本）再分发**。
-所以本公开仓库**只放工具、不放图标**：
+所以这个公开的包里**只放工具、不放图标**：
 
-| 内容 | 在仓库里？ | 怎么获得 |
+| 内容 | 在包里？ | 怎么获得 |
 | --- | --- | --- |
-| `scripts/` `templates/` `references/` `SKILL.md` `README.md` | ✅ 在 | — |
+| `lib/` `cordis.patch.yml` `package.json` | ✅ 在 | — |
+| `skills/harmonyos-ui-icons/` 下的 `SKILL.md` `scripts/` `templates/` `references/` `catalog/` | ✅ 在 | — |
 | `catalog/iconsax-free-index.json`（只是 URL 索引，不是图形） | ✅ 在 | — |
-| `assets/iconsax/**` `assets/iconsax-anim/**`（图形本身） | ❌ **不在** | clone 后跑 `node scripts/bootstrap.mjs` 从官方 CDN 拉取 |
+| `skills/harmonyos-ui-icons/assets/iconsax/**`、`assets/iconsax-anim/**`（图形本身） | ❌ **不在** | 装好后跑 `node skills/harmonyos-ui-icons/scripts/bootstrap.mjs` 从官方 CDN 拉取 |
 
-如果你 fork 了这个仓库，**请不要把 `assets/iconsax/` 提交上去**。它们已在 `.gitignore` 里。
+如果你 fork 了这个仓库，**请不要把 `assets/iconsax/` 提交上去**。
+它们已在 `.gitignore` 里（跨层级匹配 `**/assets/iconsax*/`）。
 
 ---
 

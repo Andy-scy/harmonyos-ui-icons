@@ -2,15 +2,16 @@
 
 **简体中文** | [English](README.en.md)
 
-> **HarmonyOS / ArkTS 图标库 + AI 技能（Iconsax 免费集）**
-> 给鸿蒙应用界面用的一整套图标方案：**图标素材 + 上色方案 + 动效方案 + 踩坑清单**，全部在真机模拟器上验证过。
+> **DeepSeek Harness 技能包（bundle）+ 鸿蒙图标工具链**
+> 装上之后，DSH 里的 Agent 在做 HarmonyOS / ArkTS 界面时会自动带上这套图标能力：**图标素材 + 上色方案 + 动效方案 + 踩坑清单**，全部在真机模拟器上验证过。
 
 <p>
 <img alt="HarmonyOS" src="https://img.shields.io/badge/HarmonyOS-5.0%2B-000000?logo=harmonyos&logoColor=white">
 <img alt="ArkTS" src="https://img.shields.io/badge/ArkTS-ArkUI-0A59F7">
 <img alt="API" src="https://img.shields.io/badge/API-12%2B-00A870">
 <img alt="icons" src="https://img.shields.io/badge/icons-1083%20SVG%20%2B%203249%20animated-E84026">
-<img alt="license" src="https://img.shields.io/badge/code-MIT-8E4EC6">
+<img alt="DSH" src="https://img.shields.io/badge/DSH%20bundle-0.2.0--rc.x-8E4EC6">
+<img alt="license" src="https://img.shields.io/badge/code-MIT-4C566A">
 </p>
 
 ---
@@ -20,12 +21,12 @@
 **本仓库不含任何 SVG 文件。** Iconsax 的免费授权允许你把图标用在 App 里，
 但**不允许把图标本体（含改过的版本）再分发出去**，所以公开仓库里只放工具、不放图标。
 
-clone 之后**第一件事**就是让 Agent（或你自己）跑初始化：
+**装好之后的第一件事**是跑初始化：
 
 ```bash
-git clone https://github.com/Andy-scy/harmonyos-ui-icons.git
-cd harmonyos-ui-icons
-node scripts/bootstrap.mjs          # ★ 必须：从 Iconsax 官方 CDN 拉取并解密 SVG
+# <skill-root> = 本技能根目录，通常长这样：
+#   <DSH_HOME>/profiles/<profile>/node_modules/harmonyos-ui-icons/skills/harmonyos-ui-icons
+node <skill-root>/scripts/bootstrap.mjs
 ```
 
 `bootstrap.mjs` 会：
@@ -34,22 +35,63 @@ node scripts/bootstrap.mjs          # ★ 必须：从 Iconsax 官方 CDN 拉取
 2. 基于这些静态 SVG 生成 **3249 个内嵌 SMIL 的动效变体**
 3. 重新生成 `templates/IconsaxCatalog.ets`，保证目录和实际文件对得上
 
-> 需要联网，大约 1 分钟。
+> 需要联网，大约 1 分钟。**幂等**——已经初始化过会直接跳过。
 
-**装成 DSH 技能时也一样** —— 技能会在动手前自己检查 `assets/iconsax/`，
-为空就先跑 `bootstrap.mjs`，拉完才继续。
+技能自己也知道这件事：它的 `SKILL.md` 把「Step 0 初始化」写成了硬性前置条件，
+一旦发现 `assets/iconsax/` 为空，会先跑 `bootstrap.mjs` 再去拿图标。
 
 | `assets/iconsax/` 状态 | 要做什么 |
 | --- | --- |
-| 不存在 / 空目录 | **停下，先跑 `node scripts/bootstrap.mjs`** |
+| 不存在 / 空目录 | **停下，先跑 `scripts/bootstrap.mjs`** |
 | 缺你需要的图标 | `node scripts/fetch-icons.mjs --names <名字> --out assets/iconsax` |
 | 已就绪 | 直接开用 |
 
 ---
 
+## 作为 DSH 技能包安装
+
+这是一个标准的 **DSH bundle**：`package.json` 声明 `dsh.bundle.patch`，
+`cordis.patch.yml` 里**只新增一行**，挂载 DSH 自带的 `@deepseek-ai/dsh-skill-filesystem`，
+把本包携带的 `skills/` 目录注册成技能根。
+
+```yaml
+# cordis.patch.yml —— 纯新增，不改写/不冒用任何已有 entry id
+- insert:
+    - id: harmonyos-ui-icons-skill-filesystem
+      name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        providerName: harmonyos-ui-icons
+        includeDefaultRoots: false
+        bundledSkillDir: !!js ...   # 从安装后的包身份解析到本包的 skills/
+```
+
+安装方式任选：
+
+**A. 通过 DSH 的插件管理器**（推荐，走 `plugin_manager` `install_bundle`）
+
+**B. 手动装进某个 profile**
+
+```bash
+# 在 profile 目录里（<DSH_HOME>/profiles/<profile>）
+pnpm add harmonyos-ui-icons            # 或 "harmonyos-ui-icons": "git+https://github.com/Andy-scy/harmonyos-ui-icons.git"
+# 然后把 "harmonyos-ui-icons" 加进该 profile package.json 的 dsh.profile.bundles
+```
+
+**C. 只想用技能本体**（不装 bundle）
+
+把 `skills/harmonyos-ui-icons/` 整个目录拷进技能的搜索路径即可，比如
+`<DSH_HOME>/skills/harmonyos-ui-icons/` 或项目里的 `.dsh/skills/harmonyos-ui-icons/`。
+
+> 三种方式装完之后**都要跑一次 `scripts/bootstrap.mjs`**。
+
+装好之后，在 DSH 里只要提到 ArkTS / ArkUI / 鸿蒙页面 / 组件 / TabBar / "加个图标" / "做个鸿蒙界面"，
+技能会自动加载，带着这套图标库和文档出场。
+
+---
+
 ## 这是什么
 
-鸿蒙 App 做界面绕不开图标。这个仓库解决四件事：
+鸿蒙 App 做界面绕不开图标。这个包解决四件事：
 
 | | |
 | --- | --- |
@@ -59,7 +101,7 @@ node scripts/bootstrap.mjs          # ★ 必须：从 Iconsax 官方 CDN 拉取
 | 📚 **避坑文档** | ArkUI 的 SVG 能力边界、上色两条路线、授权红线、12 条实机踩坑清单 |
 
 图标来自 [Iconsax](https://iconsax.io) 的**免费授权**范围（7,140 个静态图标中的 181 个常用款）。
-仓库同时带**完整的 7,140 个免费图标索引**和下载脚本，需要冷门图标时一条命令就能拉。
+包里同时带**完整的 7,140 个免费图标索引**和下载脚本，需要冷门图标时一条命令就能拉。
 
 ---
 
@@ -68,54 +110,38 @@ node scripts/bootstrap.mjs          # ★ 必须：从 Iconsax 官方 CDN 拉取
 1. **拷图标**：`assets/iconsax/<style>/<name>.svg` → 你的 `entry/src/main/resources/rawfile/iconsax/`
 2. **必须上色**：Iconsax 的 SVG 全是白色。填充型（`bold`/`bulk`/`outline`）用 `Image.fillColor()`，
    描边型（`linear`/`twotone`/`broken`）用 `Image.colorFilter(乘法矩阵)`
-3. **要动效不用买 Lottie**：跑 `scripts/make-animated-svg.mjs` 往 SVG 里注入 SMIL 就行
+3. **要动效不用买 Lottie**：`bootstrap.mjs` 已经生成好动效变体；
+   想要别的效果就跑 `scripts/make-animated-svg.mjs` 往 SVG 里注入 SMIL
 
 ---
 
 ## 快速开始
 
-### 1. 装成 DeepSeek Harness 技能（推荐）
-
-仓库根目录就是一个可直接安装的 DSH 技能：
-
-```powershell
-git clone https://github.com/Andy-scy/harmonyos-ui-icons "$env:DSH_HOME\skills\harmonyos-ui-icons"
-
-# ★ 关键：装完必须初始化，否则技能里没有图标
-node "$env:DSH_HOME\skills\harmonyos-ui-icons\scripts\bootstrap.mjs"
-```
-
-> 技能自己也知道这件事 —— 它的 SKILL.md 里把「Step 0 初始化」写成了硬性前置条件，
-> 一旦发现 `assets/iconsax/` 为空，会先跑 `bootstrap.mjs` 再去拿图标。
-
-装完之后，在 DSH 里只要提到 ArkTS / ArkUI / 鸿蒙页面 / 组件 / TabBar / "加个图标" / "做个鸿蒙界面"，
-技能会自动加载，带着这套图标库和文档出场。
-
-### 2. 或者当普通图标包用
-
 ```bash
-# ★ 先初始化（拉取 + 解密 + 生成动效）
-node scripts/bootstrap.mjs
+# ① 初始化（拉取 + 解密 + 生成动效）
+node skills/harmonyos-ui-icons/scripts/bootstrap.mjs
 
-# 想要更多图标（总共 1101 个名字可选）
+# ② 想要更多图标（总共 1101 个名字可选）
+cd skills/harmonyos-ui-icons
 node scripts/fetch-icons.mjs --search chat
 node scripts/fetch-icons.mjs --list-categories
-node scripts/fetch-icons.mjs --out .../rawfile/iconsax --names home,user,setting --styles bold,linear,twotone
+node scripts/fetch-icons.mjs --out <工程>/entry/src/main/resources/rawfile/iconsax \
+  --names home,user,setting --styles bold,linear,twotone
 
-# 生成别的动效变体
+# ③ 生成别的动效变体
 node scripts/make-animated-svg.mjs \
   --in  assets/iconsax \
   --out assets/iconsax-anim \
   --effects float,pulse,spin,wiggle,beat
 ```
 
-### 3. 在页面里用
+在页面里用：
 
 ```bash
 # 拷三个模板进工程
-cp templates/Tint.ets            <工程>/entry/src/main/ets/common/
-cp templates/IconsaxIcon.ets     <工程>/entry/src/main/ets/components/
-cp templates/IconsaxCatalog.ets  <工程>/entry/src/main/ets/model/
+cp skills/harmonyos-ui-icons/templates/Tint.ets            <工程>/entry/src/main/ets/common/
+cp skills/harmonyos-ui-icons/templates/IconsaxIcon.ets     <工程>/entry/src/main/ets/components/
+cp skills/harmonyos-ui-icons/templates/IconsaxCatalog.ets  <工程>/entry/src/main/ets/model/
 ```
 
 ```ts
@@ -183,15 +209,15 @@ struct Index {
 | `colorFilter(矩阵)` | "SVG类型的图源**只有设置了 stroke 属性**（无论是否有值）才会生效" | 描边型图稿 |
 
 而 Iconsax 的 6 种样式正好分成两派，所以要靠 `IconsaxCatalog.isStrokeStyle()` 分流。
-详见 [references/arkui-svg-capability.md](references/arkui-svg-capability.md)。
+详见 [references/arkui-svg-capability.md](skills/harmonyos-ui-icons/references/arkui-svg-capability.md)。
 
 ### 3. 关于 Iconsax 的"动效图标"
 
 Iconsax 官网那 **983 个动效图标是 Pro 付费专属**（Lottie 格式），免费授权里没有，
 而且授权也**不允许再分发**。所以：
 
-- ❌ 本仓库**没有**任何 Iconsax 官方动效文件
-- ✅ 本仓库的 3249 个动效 SVG 是用 `make-animated-svg.mjs` 给**免费静态图标**注入 SMIL 生成的
+- ❌ 本包**没有**任何 Iconsax 官方动效文件
+- ✅ 本包的 3249 个动效 SVG 是用 `make-animated-svg.mjs` 给**免费静态图标**注入 SMIL 生成的
 
 ---
 
@@ -205,35 +231,41 @@ Iconsax 官网那 **983 个动效图标是 Pro 付费专属**（Lottie 格式）
 | 4 | **工程路径不能含中文**，hvigor 会直接拒绝构建 |
 | 5 | **ArkUI 的 SVG 解析器不认 CSS（`<style>`/class）和 `<text>`** |
 
-完整 12 条见 [references/pitfalls.md](references/pitfalls.md)。
+完整 12 条见 [references/pitfalls.md](skills/harmonyos-ui-icons/references/pitfalls.md)。
 
 ---
 
 ## 目录结构
 
 ```
-harmonyos-ui-icons/
-├─ SKILL.md                          技能定义（触发条件 + 标准工作流）
-├─ assets/                           ⚠️ 全部由 bootstrap.mjs 生成，不进版本库
-│  ├─ README.md                      说明为什么图标不在仓库里
-│  ├─ iconsax/<style>/<name>.svg     1083 个静态 SVG        ← 生成
-│  └─ iconsax-anim/<fx>/<style>/<name>.svg   3249 个 SMIL 动效 SVG  ← 生成
-├─ templates/                        ArkTS 模板（Tint / IconsaxIcon / IconsaxCatalog）
-├─ catalog/
-│  ├─ iconsax-free-index.json        全部 7,140 个免费图标索引（1101 名字 / 34 类目）
-│  └─ curated-names.json             精选的 181 个图标名
-├─ scripts/
-│  ├─ bootstrap.mjs                  ★ 首次使用必跑：一键初始化
-│  ├─ fetch-icons.mjs                从官方 CDN 按需拉取 + 解密
-│  └─ make-animated-svg.mjs          给静态 SVG 批量注入 SMIL
-├─ references/
-│  ├─ arkui-svg-capability.md        ArkUI 对 SVG / 动效 / Lottie 的能力边界
-│  ├─ license.md                     授权要点与红线
-│  └─ pitfalls.md                    12 条实机踩坑清单
-├─ examples/                         验证用示例页 + 复现脚本
+harmonyos-ui-icons/                    ← npm 包 = DSH bundle
+├─ package.json                        dsh.bundle.patch + dsh.compatibility.dshReleases
+├─ cordis.patch.yml                    一行 insert，挂载 dsh-skill-filesystem
+├─ lib/index.js                        resolveSkillRoot()
+├─ icon.svg                            插件管理器显示的图标
+├─ locale/{en,zh}.json                 插件管理器显示的标题与描述
+├─ skills/
+│  └─ harmonyos-ui-icons/              ← 技能本体
+│     ├─ SKILL.md
+│     ├─ assets/                       ⚠️ 全部由 bootstrap.mjs 生成，不进版本库
+│     │  └─ README.md                  说明为什么图标不在仓库里
+│     ├─ templates/                    ArkTS 模板（Tint / IconsaxIcon / IconsaxCatalog）
+│     ├─ catalog/
+│     │  ├─ iconsax-free-index.json    全部 7,140 个免费图标索引（1101 名字 / 34 类目）
+│     │  └─ curated-names.json         精选的 181 个图标名
+│     ├─ scripts/
+│     │  ├─ bootstrap.mjs              ★ 首次使用必跑
+│     │  ├─ fetch-icons.mjs            从官方 CDN 按需拉取 + 解密
+│     │  └─ make-animated-svg.mjs      给静态 SVG 批量注入 SMIL
+│     └─ references/
+│        ├─ arkui-svg-capability.md    ArkUI 对 SVG / 动效 / Lottie 的能力边界
+│        ├─ license.md                 授权要点与红线
+│        └─ pitfalls.md                12 条实机踩坑清单
+├─ examples/                           契约校验 + ArkTS 模板编译验证脚本
 └─ docs/
-   ├─ feasibility-report.md          完整可行性调查报告
-   └─ screenshots/                   实机截图
+   ├─ COMPATIBILITY.md                 兼容性声明与验证依据
+   ├─ feasibility-report.md            完整可行性调查报告
+   └─ screenshots/                     实机截图
 ```
 
 **6 种样式**：`bold` `bulk` `broken` `linear` `outline` `twotone`
@@ -243,11 +275,22 @@ harmonyos-ui-icons/
 
 ## 验证记录
 
-不是只写文档 —— 模板代码本身也过了真实编译 + 实机运行：
+不是只写文档 —— 契约和模板代码都过了真实校验：
+
+**Bundle 契约**（`node examples/validate-bundle.mjs`，**38/38 通过**）：
 
 | 验证项 | 结果 |
 | --- | --- |
-| `templates/` 三个 ArkTS 文件塞进真实工程编译 | ✅ `BUILD SUCCESSFUL` |
+| manifest 字段（含 `exports["./package.json"]`、`icon` 体积、兼容性声明） | ✅ |
+| patch 形状：单个 `insert`、无改写行、entry id 为插件自有 | ✅ |
+| `!!js` 表达式按 loader 的真实作用域求值并解析出目录 | ✅ |
+| `resolveSkillRoot()` 找到自带技能、SKILL.md frontmatter 合规 | ✅ |
+
+**ArkTS 模板**（`examples/verify-templates.ps1`）：
+
+| 验证项 | 结果 |
+| --- | --- |
+| 三个模板塞进真实工程编译 | ✅ `BUILD SUCCESSFUL` |
 | 填充型分支（`fillColor`） | ✅ 蓝色实心图标正确渲染 |
 | 描边型分支（`colorFilter`） | ✅ 蓝色线框图标正确渲染，双色调保留 |
 | SMIL 动效 SVG | ✅ 帧间像素差 4.56%，确实在动 |
@@ -255,18 +298,18 @@ harmonyos-ui-icons/
 | `@Prop icSize: number \| string` 联合类型 | ✅ `'36vp'` 正常渲染 |
 | `@ohos/lottie` 播放 Bodymovin JSON | ✅ 25 fps 正常播放 |
 
-环境：DevEco Studio 26.0.0 · HarmonyOS 6.0.1 (API 21) 模拟器 · 编译目标 `compatibleSdkVersion 5.0.0(12)`
+环境：DevEco Studio 26.0.0 · HarmonyOS 6.0.1 (API 21) 模拟器 · DSH `0.2.0-rc.2` · 编译目标 `compatibleSdkVersion 5.0.0(12)`
 
-复现脚本见 [examples/verify-templates.ps1](examples/verify-templates.ps1)。
+兼容性声明与依据见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)。
 
 ---
 
 ## 授权（重要，用之前扫一眼）
 
-**本仓库的代码**（`scripts/` `templates/` `references/` `SKILL.md` `README.md` 等）：**MIT**，随便用。
+**本包的代码**（`lib/` `scripts/` `templates/` `references/` `SKILL.md` 等）：**MIT**，随便用。
 
-**图标**来自 [Iconsax](https://iconsax.io)，适用其 **Free License**。它们在 clone 之后由 `bootstrap.mjs`
-从官方 CDN 拉取，**不随仓库分发**——这正是因为授权要求：
+**图标**来自 [Iconsax](https://iconsax.io)，适用其 **Free License**。它们在安装后由 `bootstrap.mjs`
+从官方 CDN 拉取，**不随包分发**——这正是因为授权要求：
 
 - ✅ 个人 + 商用，不限量，可修改，**不需要署名**
 - ✅ 明确允许"嵌入你开发的移动 App"
@@ -277,15 +320,14 @@ harmonyos-ui-icons/
 
 > 也就是说：**把图标用在你自己的 App 里完全合规**；
 > **把图标打包成"图标库"再公开分发是不合规的**。
-> 本仓库刻意不带图标，就是这个原因 —— 请让使用者自己从官方源初始化。
+> 本包刻意不带图标，就是这个原因 —— 请让使用者自己从官方源初始化。
 
-详见 [references/license.md](references/license.md) 与 [NOTICE.md](NOTICE.md)。
+详见 [skills/harmonyos-ui-icons/references/license.md](skills/harmonyos-ui-icons/references/license.md) 与 [NOTICE.md](NOTICE.md)。
 
 ### 如果你 fork 了这个仓库
 
 **不要把 `assets/iconsax/` 或 `assets/iconsax-anim/` 提交上去。**
-它们已经写进 [`.gitignore`](.gitignore)，正常操作不会被误传。
-让使用者跑 `node scripts/bootstrap.mjs` 自己拉，既合规、又能保证拿到的是官方最新文件。
+它们已经写进 [`.gitignore`](.gitignore)（用的是跨层级匹配 `**/assets/iconsax*/`），正常操作不会被误传。
 
 ---
 

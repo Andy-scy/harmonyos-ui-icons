@@ -19,7 +19,11 @@ description: >
 # HarmonyOS 图标库（Iconsax）
 
 > 仓库：https://github.com/Andy-scy/harmonyos-ui-icons
-> 如果这个技能是从 GitHub clone 下来的，**先确认已经跑过 `node scripts/bootstrap.mjs`**（见下面「零」）。
+> 分发形式：一个 **DSH 技能包（bundle）**，技能本体位于仓库的 `skills/harmonyos-ui-icons/`。
+> 包的 `cordis.patch.yml` 挂载 `@deepseek-ai/dsh-skill-filesystem`，把本包自带的 `skills/` 目录作为技能根。
+>
+> ⚠️ **不管用什么方式装进来的，用之前都要先确认跑过初始化**（见下面「零」）：
+> `node scripts/bootstrap.mjs`（路径相对于**本技能的根目录**）。
 
 一站式解决"鸿蒙 App 界面要图标"这件事：**图标素材 + 上色方案 + 动效方案 + 踩坑清单**，全部实机验证过。
 
@@ -71,7 +75,7 @@ node scripts/bootstrap.mjs
 ## 二、目录结构
 
 ```
-harmonyos-ui-icons/
+skills/harmonyos-ui-icons/            ← 本技能的根目录（下面所有路径都相对它）
 ├─ SKILL.md                          ← 本文件
 ├─ assets/
 │  ├─ README.md                      ← 说明资产为什么不在版本库里
@@ -95,6 +99,17 @@ harmonyos-ui-icons/
    ├─ arkui-svg-capability.md        ← ArkUI 对 SVG / 动效 / Lottie 的能力边界（官方文档提炼）
    ├─ license.md                     ← Iconsax 授权要点与红线
    └─ pitfalls.md                    ← 12 条实机踩坑清单
+```
+
+整包（DSH 技能包）的结构则是：
+
+```
+harmonyos-ui-icons/                   ← npm 包 = DSH bundle
+├─ package.json                       dsh.bundle.patch + dsh.compatibility.dshReleases
+├─ cordis.patch.yml                   挂载 dsh-skill-filesystem，指向下面的 skills/
+├─ lib/index.js                       resolveSkillRoot()
+├─ icon.svg · locale/{en,zh}.json     插件管理器里的显示信息
+└─ skills/harmonyos-ui-icons/         ← 技能本体（就是上面那棵树）
 ```
 
 ## 三、标准工作流

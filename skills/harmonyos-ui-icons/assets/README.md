@@ -3,9 +3,11 @@
 **这个目录里的图标文件不会被提交到 Git。**
 
 Iconsax 的免费授权允许你把图标用在 App 里，但**不允许把图标本体（或其修改版本）再分发**。
-所以公开仓库里只放工具，不放图标——clone 之后需要**先初始化**。
+所以公开仓库里只放工具，不放图标——装好之后需要**先初始化**。
 
 ## 初始化
+
+路径相对于**本技能的根目录**（`skills/harmonyos-ui-icons/`）：
 
 ```bash
 node scripts/bootstrap.mjs
@@ -39,4 +41,6 @@ node scripts/bootstrap.mjs --force                    # 已有资产也重新拉
 
 如果你 fork 了这个仓库，**请不要把 `assets/iconsax/` 和 `assets/iconsax-anim/` 提交上去**。
 让使用者自己跑 `bootstrap.mjs` 从官方源获取，既合规、又能保证拿到的是最新且未被篡改的文件。
-详见仓库根目录的 [`NOTICE.md`](../NOTICE.md)。
+`.gitignore` 里用的 `**/assets/iconsax*/` 是跨层级匹配的，即使目录结构调整也不会误传。
+
+详见仓库根目录的 [`NOTICE.md`](../../../NOTICE.md)。

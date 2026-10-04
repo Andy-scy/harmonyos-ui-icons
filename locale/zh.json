@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "鸿蒙图标库（Iconsax）",
+    "description": "给 HarmonyOS / ArkTS 界面开发用的图标工具链：从 Iconsax 官方 CDN 拉取并解密免费图标，用正确的 ArkTS 上色路径渲染，并注入零依赖的 SVG SMIL 动效。图标本体不随包分发，安装后需先跑一次初始化脚本。"
+  }
+}
