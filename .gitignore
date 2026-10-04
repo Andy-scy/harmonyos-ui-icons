@@ -1,0 +1,47 @@
+# Node / ohpm
+node_modules/
+oh_modules/
+oh-package-lock.json5.bak
+
+# ---------------------------------------------------------------------------
+# Icon assets — GENERATED, NEVER COMMITTED
+#
+# Iconsax's Free License allows embedding the icons in your app, but forbids
+# redistributing the artwork itself (loose or in packs), including modified
+# versions. So the SVG files must not live in this public repo.
+#
+# Run `node scripts/bootstrap.mjs` after cloning to fetch them from the
+# official Iconsax CDN. See assets/README.md and NOTICE.md.
+# ---------------------------------------------------------------------------
+assets/iconsax/
+assets/iconsax-anim/
+
+# HarmonyOS / hvigor build output
+.hvigor/
+build/
+build-output/
+*.hap
+*.har
+*.hsp
+
+# DevEco Studio
+.idea/
+.cxx/
+local.properties
+
+# signing material — never commit these
+*.p12
+*.cer
+*.p7b
+*.csr
+signing/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+
+# scratch
+tmp/
+*.log
