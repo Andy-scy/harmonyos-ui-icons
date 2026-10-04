@@ -1,5 +1,7 @@
 # harmonyos-ui-icons
 
+**简体中文** | [English](README.en.md)
+
 > **HarmonyOS / ArkTS 图标库 + AI 技能（Iconsax 免费集）**
 > 给鸿蒙应用界面用的一整套图标方案：**图标素材 + 上色方案 + 动效方案 + 踩坑清单**，全部在真机模拟器上验证过。
 
